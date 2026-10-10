@@ -1,7 +1,8 @@
-from fastapi import APIRouter, HTTPException, Query
-from typing import Optional
+from fastapi import APIRouter, HTTPException, Query, Body
+from typing import Optional, Dict, Any
 from backend.db.repository import get_repository
 from backend.schemas.models import PatientListResponse, PatientRecord
+from backend.ml.gemini_reasoning import generate_patient_ai_reasoning
 
 router = APIRouter(tags=["Patients"])
 
@@ -41,3 +42,17 @@ def get_patient_detail(patient_id: int):
     if not patient:
         raise HTTPException(status_code=404, detail=f"Patient with ID {patient_id} not found.")
     return patient
+
+@router.post("/patients/{patient_id}/ai-reasoning")
+def get_patient_ai_reasoning(
+    patient_id: int,
+    payload: Optional[Dict[str, Any]] = Body(default={})
+):
+    repo = get_repository()
+    patient = repo.get_patient_by_id(patient_id)
+    if not patient:
+        raise HTTPException(status_code=404, detail=f"Patient with ID {patient_id} not found.")
+
+    custom_key = payload.get("api_key") if payload else None
+    reasoning_result = generate_patient_ai_reasoning(patient.model_dump(), custom_api_key=custom_key)
+    return reasoning_result

@@ -108,5 +108,17 @@ export const apiService = {
   // Download Callback Queue CSV URL
   getExportUrl() {
     return `${BASE_URL}/export/callback-queue`;
+  },
+
+  // Gemini AI Prioritization Reasoning
+  async getPatientAiReasoning(patientId, apiKey = '') {
+    const res = await fetch(`${BASE_URL}/patients/${patientId}/ai-reasoning`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ api_key: apiKey })
+    });
+    return handleResponse(res);
   }
 };

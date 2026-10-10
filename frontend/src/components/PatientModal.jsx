@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   X,
   User,
@@ -10,13 +10,34 @@ import {
   Layers,
   PhoneCall,
   CheckCircle,
-  AlertCircle
+  AlertCircle,
+  Sparkles,
+  Bot,
+  Key
 } from 'lucide-react';
+import { apiService } from '../services/api';
 
 export default function PatientModal({ patient, onClose, onOpenReview }) {
   if (!patient) return null;
 
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiData, setAiData] = useState(null);
+  const [apiKey, setApiKey] = useState('');
+  const [showKeyInput, setShowKeyInput] = useState(false);
+
   const riskPercent = (patient.estimated_risk * 100).toFixed(1);
+
+  const handleGenerateAiReasoning = async () => {
+    try {
+      setAiLoading(true);
+      const res = await apiService.getPatientAiReasoning(patient.id, apiKey);
+      setAiData(res);
+    } catch (err) {
+      alert(`AI Reasoning error: ${err.message}`);
+    } finally {
+      setAiLoading(false);
+    }
+  };
 
   return (
     <div className="modal-backdrop" onClick={onClose}>
@@ -151,7 +172,7 @@ export default function PatientModal({ patient, onClose, onOpenReview }) {
           {/* Top 3 Risk Factors */}
           <div>
             <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--text-main)', marginBottom: '0.5rem' }}>
-              PRIMARY PREDICTIVE RISK DRIVERS:
+              PRIMARY PREDICTIVE RISK DRIVERS (ML LOG-ODDS ATTRIBUTION):
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
               {patient.top_factors && patient.top_factors.map((f, i) => (
@@ -174,6 +195,83 @@ export default function PatientModal({ patient, onClose, onOpenReview }) {
                 </div>
               ))}
             </div>
+          </div>
+
+          {/* AI Prioritization Reasoning Section (Gemini) */}
+          <div style={{
+            background: 'linear-gradient(135deg, #f0fdfa, #f8fafc)',
+            border: '1px solid #99f6e4',
+            borderRadius: 'var(--radius-md)',
+            padding: '1rem',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '0.75rem'
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <Sparkles size={16} color="#0d9488" />
+                <strong style={{ fontSize: '0.85rem', color: '#0f766e' }}>
+                  AI Prioritization Reasoning & Clinical Synthesis
+                </strong>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <button
+                  type="button"
+                  onClick={() => setShowKeyInput(!showKeyInput)}
+                  className="btn btn-secondary btn-sm"
+                  style={{ fontSize: '0.7rem', padding: '0.2rem 0.5rem' }}
+                  title="Configure Gemini API Key"
+                >
+                  <Key size={12} />
+                  <span>{showKeyInput ? 'Hide Key' : 'API Key'}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleGenerateAiReasoning}
+                  disabled={aiLoading}
+                  className="btn btn-primary btn-sm"
+                  style={{ background: '#0d9488', fontSize: '0.75rem' }}
+                >
+                  {aiLoading ? <Activity className="animate-spin" size={13} /> : <Bot size={13} />}
+                  <span>{aiLoading ? 'Synthesizing...' : 'Generate with Gemini AI'}</span>
+                </button>
+              </div>
+            </div>
+
+            {showKeyInput && (
+              <div style={{ display: 'flex', gap: '0.5rem', background: 'white', padding: '0.5rem', borderRadius: '6px', border: '1px solid #cbd5e1' }}>
+                <input
+                  type="password"
+                  placeholder="Enter Gemini API Key (or leave blank to use server environment key)..."
+                  value={apiKey}
+                  onChange={(e) => setApiKey(e.target.value)}
+                  style={{ flex: 1, border: 'none', outline: 'none', fontSize: '0.75rem' }}
+                />
+              </div>
+            )}
+
+            {aiData ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.25rem' }}>
+                <div style={{ fontSize: '0.7rem', color: '#0d9488', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                  <CheckCircle size={12} />
+                  <span>Synthesized by: {aiData.model} ({aiData.source})</span>
+                </div>
+                <p style={{ fontSize: '0.825rem', color: '#1e293b', lineHeight: 1.5, background: 'white', padding: '0.75rem', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
+                  <strong>Prioritization Rationale: </strong> {aiData.reasoning}
+                </p>
+                {aiData.nurse_call_script && (
+                  <p style={{ fontSize: '0.8rem', color: '#0369a1', background: '#e0f2fe', padding: '0.6rem 0.75rem', borderRadius: '6px' }}>
+                    <strong>Tailored Nurse Script: </strong> "{aiData.nurse_call_script}"
+                  </p>
+                )}
+              </div>
+            ) : (
+              <p style={{ fontSize: '0.75rem', color: '#64748b', margin: 0 }}>
+                Click <strong>"Generate with Gemini AI"</strong> to synthesize why this patient was prioritized at Rank #{patient.queue_rank} and auto-draft an outreach conversation prompt.
+              </p>
+            )}
           </div>
 
           {/* Recommended Action */}
