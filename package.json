@@ -1,0 +1,11 @@
+{
+  "name": "medisense",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev:frontend": "npm --prefix frontend run dev",
+    "dev:backend": "python -m uvicorn backend.app:app --reload --port 8000",
+    "build": "npm --prefix frontend run build",
+    "test:backend": "pytest tests/ -v"
+  }
+}
