@@ -198,26 +198,76 @@ The **Pima Indians Diabetes Database** (National Institute of Diabetes and Diges
 | **Precision@100 (Top-100 Queue)** | **$81.00\%$ (81 / 100)** | $77.00\%$ (77 / 100) | **2.32x Enrichment** over 34.9% base rate |
 | **Recall@100 (Positives Captured)**| **$30.22\%$ (81 / 268)** | $28.73\%$ (77 / 268) | Captures nearly 1 in 3 total clinic cases in 100 calls |
 
+### Scikit-Learn Algorithms & Hyperparameters Used
+
+1. **Production & Deployed Model: Balanced Logistic Regression**
+   * **Implementation:** `sklearn.linear_model.LogisticRegression`
+   * **Parameters:**
+     * `class_weight="balanced"`: Compensates for the 65.1% negative / 34.9% positive class imbalance, weighting positive errors higher.
+     * `max_iter=1000`: Ensures complete numerical convergence on scaled features.
+     * `random_state=42`: Guarantees deterministic, reproducible results.
+     * `solver="lbfgs"`: Standard quasi-Newton optimizer.
+   * **Learned Weights (Coefficients):**
+     * $\text{Glucose}: +1.150$ (dominant clinical predictor)
+     * $\text{BMI}: +0.676$ (second strongest predictor)
+     * $\text{Pregnancies}: +0.412$ (past gestational stress)
+     * $\text{DiabetesPedigreeFunction}: +0.361$ (genetic family history)
+     * $\text{Age}: +0.175$ (age-related beta-cell decline)
+     * Missing indicators: $\text{BloodPressure\_missing} (+0.191)$, $\text{Insulin\_missing} (+0.167)$, $\text{Glucose\_missing} (+0.037)$
+     * $\text{Intercept}: -0.256$
+
+2. **Benchmark Ensemble: Random Forest Classifier**
+   * **Implementation:** `sklearn.ensemble.RandomForestClassifier`
+   * **Parameters:**
+     * `n_estimators=100`: Forest size.
+     * `max_depth=5`: Regularization preventing overfitting on the small $N=768$ dataset.
+     * `min_samples_split=4`: Minimum samples required to split an internal node.
+     * `class_weight="balanced"`: Balanced bootstrap sample weights.
+     * `random_state=42`: Reproducible tree splits.
+
+3. **Preprocessing Pipeline (Zero Leakage):**
+   * `sklearn.impute.SimpleImputer(strategy="median")`: Median imputation fitted strictly inside training folds.
+   * `sklearn.preprocessing.StandardScaler()`: Zero-mean, unit-variance normalization fitted strictly on training folds.
+   * `sklearn.model_selection.StratifiedKFold(n_splits=5, shuffle=True, random_state=42)`: Stratified cross-validation preserving the 34.9% outcome ratio across all 5 folds.
+
 ### Model Selection Rationale
 While Random Forest achieves marginally higher raw recall ($75.4\%$), **Logistic Regression** delivers higher discriminative ROC-AUC ($0.837$), higher PR-AUC ($0.728$), higher Precision@100 ($81.0\%$), and crucially, provides **transparent, monotonic, and interpretable log-odds coefficients** required for clinical explainability.
 
 ### Operating Point Tied to Clinic Capacity (100 Calls/Month)
 Instead of relying on an arbitrary 0.5 threshold, the clinic's operating policy ranks patients by predicted probability descending and cuts off at **Rank 100**.
-* **Unprioritized Outreach:** 100 random calls would reach $\approx 35$ positive cases.
-* **MediSense Outreach:** Top 100 calls reach **81 positive cases** (81% Precision@100), effectively doubling the clinic's outreach productivity.
+* **All 768 Patients Scored:** Every patient in the dataset is evaluated, assigned an estimated risk score ($0.0\%$ to $99.8\%$), and assigned a global Priority Rank (`#1` to `#768`).
+* **Unprioritized Outreach:** 100 random calls across the clinic would reach $\approx 35$ positive cases (the 34.9% baseline).
+* **MediSense Outreach:** Top 100 calls reach **81 positive cases** (81% Precision@100), effectively delivering a **$2.32\times$ efficiency enrichment** on nursing time.
 
 ---
 
-## 7. Explainability & Top-10 Nurse Follow-Up Notes
+## 7. Explainability & AI Reasoning Engine
 
-### Explainability Methodology
+MediSense provides two complementary reasoning engines:
+
+### Engine 1: Transparent ML Feature Attribution (Built-in)
 For each ranked patient, MediSense extracts the **top 3 contributing risk factors**:
 1. Computes standardized feature deviation from the clinic population median: $z_i = (x_i - \text{median}_i) / \sigma_i$.
 2. Multiplies by the logistic regression weight: $\text{contrib}_i = w_i \cdot z_i$.
 3. Displays the factor with its actual value, unit, clinic benchmark, and neutral non-causal explanation (e.g. *"Elevated fasting glucose is strongly associated with glycemic dysregulation"*).
 4. Strictly distinguishes association from causation: never claims a single factor caused diabetes.
 
-### Top-10 Nurse Follow-Up Notes
+### Engine 2: Gemini AI Clinical Reasoning & Call Scripting (Google AI)
+Patients can also be analyzed using Google's **Gemini models** (`gemini-2.5-flash` / `gemini-1.5-flash`):
+* **Endpoint:** `POST /api/patients/{patient_id}/ai-reasoning`
+* **What Gemini Generates:**
+  * **Prioritization Rationale:** 2-3 sentences explaining exactly why this patient appears at their specific rank based on their clinical measurements relative to the community baseline.
+  * **Tailored Nurse Call Script:** A focused, 1-line conversation prompt for the nurse to discuss on the telephone outreach call.
+* **Clinical Guardrails Enforced in System Prompt:**
+  1. *No medical diagnoses* — strictly uses neutral decision-support language (*"elevated estimated risk; clinical evaluation recommended"*).
+  2. *Zero hallucination* — grounds the reasoning solely in actual recorded numbers; never invents symptoms, medications, or unverified medical history.
+* **How to Configure the Gemini API Key:**
+  * **Via `.env` file:** Add `GEMINI_API_KEY=your_key_here` in the project root.
+  * **Via Environment Variable:** In PowerShell: `$env:GEMINI_API_KEY="your_key_here"`.
+  * **Live in the UI:** Open any patient modal in the Callback Queue, click the **API Key** button, paste the key, and click **"Generate with Gemini AI"**.
+* **Zero-Failure Fallback:** If no API key is provided, the endpoint automatically and seamlessly returns reasoning derived from the transparent ML explainability engine so the application never breaks.
+
+### Top-10 Nurse Follow-Up Notes Workflow
 The top 10 highest-risk patients receive an automated, rule-based 1-line conversation prompt:
 * **Strict Guardrails:** Cites only actual input metrics (Glucose, BMI, Age, DPF). Does not invent symptoms, prior medications, or unverified history.
 * **Actionable Conversation Topics:** Suggests clinical fasting plasma glucose/HbA1c workup, lifestyle counseling, or clarifying unrecorded vitals.
