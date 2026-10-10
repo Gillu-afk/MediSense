@@ -24,9 +24,8 @@ wheels/
 .env
 
 # Database
-backend/medisense.db
-*.db
-*.sqlite3
+# Note: backend/medisense.db is tracked for pre-seeded Vercel demo deployment
+!backend/medisense.db
 
 
 # Node / Frontend

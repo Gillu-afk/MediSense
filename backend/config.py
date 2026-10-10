@@ -23,17 +23,29 @@ if ENV_PATH.exists():
                 if key and key not in os.environ:
                     os.environ[key] = val
 
+import shutil
+
 # Database Configuration
 DATABASE_URL = os.getenv("DATABASE_URL", "")
 TURSO_DATABASE_URL = os.getenv("TURSO_DATABASE_URL", "")
 TURSO_AUTH_TOKEN = os.getenv("TURSO_AUTH_TOKEN", "")
 
-# Default local SQLite database file
-SQLITE_DB_PATH = os.getenv("SQLITE_DB_PATH", str(BASE_DIR / "medisense.db"))
-
 # Check if hosted persistent database is configured
 IS_HOSTED_DB = bool(TURSO_DATABASE_URL or (DATABASE_URL and not DATABASE_URL.startswith("sqlite")))
 IS_VERCEL = bool(os.getenv("VERCEL", False))
+
+# Default local SQLite database file (copy to writable /tmp on Vercel if needed)
+if IS_VERCEL and not IS_HOSTED_DB:
+    tmp_db = Path("/tmp/medisense.db")
+    bundled_db = BASE_DIR / "medisense.db"
+    if not tmp_db.exists() and bundled_db.exists():
+        try:
+            shutil.copyfile(bundled_db, tmp_db)
+        except Exception:
+            pass
+    SQLITE_DB_PATH = os.getenv("SQLITE_DB_PATH", str(tmp_db))
+else:
+    SQLITE_DB_PATH = os.getenv("SQLITE_DB_PATH", str(BASE_DIR / "medisense.db"))
 
 # If on Vercel without hosted DB, running in Demo Mode with ephemeral storage
 IS_DEMO_MODE = IS_VERCEL and not IS_HOSTED_DB
