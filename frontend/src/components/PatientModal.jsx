@@ -49,7 +49,7 @@ export default function PatientModal({ patient, onClose, onOpenReview }) {
               width: '40px',
               height: '40px',
               borderRadius: 'var(--radius-md)',
-              background: '#0284c7',
+              background: 'var(--color-primary)',
               color: 'white',
               display: 'flex',
               alignItems: 'center',
@@ -64,7 +64,7 @@ export default function PatientModal({ patient, onClose, onOpenReview }) {
                 {patient.patient_code} - Clinical Screening Profile
               </h3>
               <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                Queue Priority Rank: <strong>#{patient.queue_rank}</strong> &bull; Intake Status: <strong>{patient.review_status}</strong>
+                Queue Priority Rank: <strong>#{patient.queue_rank}</strong> &bull; Intake Status: <strong>{patient.review_status || 'Pending'}</strong>
               </div>
             </div>
           </div>
@@ -82,8 +82,8 @@ export default function PatientModal({ patient, onClose, onOpenReview }) {
         <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
           {/* Risk Level Banner */}
           <div style={{
-            background: patient.risk_band === 'High Risk' ? '#fef2f2' : '#fffbeb',
-            border: '1px solid ' + (patient.risk_band === 'High Risk' ? '#fecaca' : '#fde68a'),
+            background: patient.risk_band === 'High Risk' ? 'var(--risk-high-bg)' : 'var(--risk-mod-bg)',
+            border: '1px solid ' + (patient.risk_band === 'High Risk' ? 'var(--risk-high-border)' : 'var(--risk-mod-border)'),
             borderRadius: 'var(--radius-md)',
             padding: '1rem',
             display: 'flex',
@@ -99,9 +99,9 @@ export default function PatientModal({ patient, onClose, onOpenReview }) {
               </div>
             </div>
 
-            <div style={{ textAlign: 'right', fontSize: '0.75rem', color: '#64748b' }}>
+            <div style={{ textAlign: 'right', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
               Historical Outcome: <br />
-              <strong style={{ color: patient.outcome === 1 ? '#b91c1c' : '#047857' }}>
+              <strong style={{ color: patient.outcome === 1 ? 'var(--risk-high-text)' : 'var(--risk-low-text)' }}>
                 {patient.outcome === 1 ? 'Positive (1)' : 'Negative (0)'}
               </strong>
             </div>
@@ -117,54 +117,54 @@ export default function PatientModal({ patient, onClose, onOpenReview }) {
               gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))',
               gap: '0.75rem'
             }}>
-              <div style={{ background: '#f8fafc', padding: '0.65rem', borderRadius: 'var(--radius-sm)', border: '1px solid #e2e8f0' }}>
-                <div style={{ fontSize: '0.7rem', color: '#64748b' }}>Glucose</div>
-                <div style={{ fontSize: '1rem', fontWeight: 700 }}>
-                  {patient.glucose === 0 ? <span style={{ color: '#d97706' }}>Unmeasured (0)</span> : `${patient.glucose} mg/dL`}
+              <div style={{ background: 'var(--bg-card-subtle)', padding: '0.65rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-light)' }}>
+                <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Glucose</div>
+                <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-main)' }}>
+                  {patient.glucose === 0 ? <span style={{ color: 'var(--risk-mod-text)' }}>Unmeasured (0)</span> : `${patient.glucose} mg/dL`}
                 </div>
               </div>
 
-              <div style={{ background: '#f8fafc', padding: '0.65rem', borderRadius: 'var(--radius-sm)', border: '1px solid #e2e8f0' }}>
-                <div style={{ fontSize: '0.7rem', color: '#64748b' }}>BMI</div>
-                <div style={{ fontSize: '1rem', fontWeight: 700 }}>
-                  {patient.bmi === 0 ? <span style={{ color: '#d97706' }}>Unmeasured (0)</span> : `${patient.bmi} kg/m²`}
+              <div style={{ background: 'var(--bg-card-subtle)', padding: '0.65rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-light)' }}>
+                <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>BMI</div>
+                <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-main)' }}>
+                  {patient.bmi === 0 ? <span style={{ color: 'var(--risk-mod-text)' }}>Unmeasured (0)</span> : `${patient.bmi} kg/m²`}
                 </div>
               </div>
 
-              <div style={{ background: '#f8fafc', padding: '0.65rem', borderRadius: 'var(--radius-sm)', border: '1px solid #e2e8f0' }}>
-                <div style={{ fontSize: '0.7rem', color: '#64748b' }}>Age</div>
-                <div style={{ fontSize: '1rem', fontWeight: 700 }}>{patient.age} yrs</div>
+              <div style={{ background: 'var(--bg-card-subtle)', padding: '0.65rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-light)' }}>
+                <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Age</div>
+                <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-main)' }}>{patient.age} yrs</div>
               </div>
 
-              <div style={{ background: '#f8fafc', padding: '0.65rem', borderRadius: 'var(--radius-sm)', border: '1px solid #e2e8f0' }}>
-                <div style={{ fontSize: '0.7rem', color: '#64748b' }}>Blood Pressure</div>
-                <div style={{ fontSize: '1rem', fontWeight: 700 }}>
-                  {patient.blood_pressure === 0 ? <span style={{ color: '#d97706' }}>Unmeasured (0)</span> : `${patient.blood_pressure} mmHg`}
+              <div style={{ background: 'var(--bg-card-subtle)', padding: '0.65rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-light)' }}>
+                <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Blood Pressure</div>
+                <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-main)' }}>
+                  {patient.blood_pressure === 0 ? <span style={{ color: 'var(--risk-mod-text)' }}>Unmeasured (0)</span> : `${patient.blood_pressure} mmHg`}
                 </div>
               </div>
 
-              <div style={{ background: '#f8fafc', padding: '0.65rem', borderRadius: 'var(--radius-sm)', border: '1px solid #e2e8f0' }}>
-                <div style={{ fontSize: '0.7rem', color: '#64748b' }}>Serum Insulin</div>
-                <div style={{ fontSize: '1rem', fontWeight: 700 }}>
-                  {patient.insulin === 0 ? <span style={{ color: '#d97706' }}>Unmeasured (0)</span> : `${patient.insulin} µU/mL`}
+              <div style={{ background: 'var(--bg-card-subtle)', padding: '0.65rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-light)' }}>
+                <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Serum Insulin</div>
+                <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-main)' }}>
+                  {patient.insulin === 0 ? <span style={{ color: 'var(--risk-mod-text)' }}>Unmeasured (0)</span> : `${patient.insulin} µU/mL`}
                 </div>
               </div>
 
-              <div style={{ background: '#f8fafc', padding: '0.65rem', borderRadius: 'var(--radius-sm)', border: '1px solid #e2e8f0' }}>
-                <div style={{ fontSize: '0.7rem', color: '#64748b' }}>Skin Thickness</div>
-                <div style={{ fontSize: '1rem', fontWeight: 700 }}>
-                  {patient.skin_thickness === 0 ? <span style={{ color: '#d97706' }}>Unmeasured (0)</span> : `${patient.skin_thickness} mm`}
+              <div style={{ background: 'var(--bg-card-subtle)', padding: '0.65rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-light)' }}>
+                <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Skin Thickness</div>
+                <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-main)' }}>
+                  {patient.skin_thickness === 0 ? <span style={{ color: 'var(--risk-mod-text)' }}>Unmeasured (0)</span> : `${patient.skin_thickness} mm`}
                 </div>
               </div>
 
-              <div style={{ background: '#f8fafc', padding: '0.65rem', borderRadius: 'var(--radius-sm)', border: '1px solid #e2e8f0' }}>
-                <div style={{ fontSize: '0.7rem', color: '#64748b' }}>Pedigree (DPF)</div>
-                <div style={{ fontSize: '1rem', fontWeight: 700 }}>{patient.diabetes_pedigree_function}</div>
+              <div style={{ background: 'var(--bg-card-subtle)', padding: '0.65rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-light)' }}>
+                <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Pedigree (DPF)</div>
+                <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-main)' }}>{patient.diabetes_pedigree_function}</div>
               </div>
 
-              <div style={{ background: '#f8fafc', padding: '0.65rem', borderRadius: 'var(--radius-sm)', border: '1px solid #e2e8f0' }}>
-                <div style={{ fontSize: '0.7rem', color: '#64748b' }}>Pregnancies</div>
-                <div style={{ fontSize: '1rem', fontWeight: 700 }}>{patient.pregnancies}</div>
+              <div style={{ background: 'var(--bg-card-subtle)', padding: '0.65rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-light)' }}>
+                <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Pregnancies</div>
+                <div style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--text-main)' }}>{patient.pregnancies}</div>
               </div>
             </div>
           </div>
@@ -179,17 +179,17 @@ export default function PatientModal({ patient, onClose, onOpenReview }) {
                 <div key={i} style={{
                   padding: '0.65rem 0.85rem',
                   borderRadius: 'var(--radius-sm)',
-                  background: f.level === 'high' ? '#fef2f2' : '#f8fafc',
-                  border: '1px solid ' + (f.level === 'high' ? '#fecaca' : '#e2e8f0'),
+                  background: f.level === 'high' ? 'var(--risk-high-bg)' : 'var(--bg-card-subtle)',
+                  border: '1px solid ' + (f.level === 'high' ? 'var(--risk-high-border)' : 'var(--border-light)'),
                   fontSize: '0.825rem'
                 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 600 }}>
-                    <span style={{ color: f.level === 'high' ? '#991b1b' : 'var(--text-main)' }}>
+                    <span style={{ color: f.level === 'high' ? 'var(--risk-high-text)' : 'var(--text-main)' }}>
                       {f.factor}: {f.value}
                     </span>
-                    <span style={{ fontSize: '0.7rem', color: '#64748b' }}>{f.benchmark}</span>
+                    <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>{f.benchmark}</span>
                   </div>
-                  <div style={{ fontSize: '0.75rem', color: '#475569', marginTop: '0.25rem', lineHeight: 1.4 }}>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem', lineHeight: 1.4 }}>
                     {f.clinical_note}
                   </div>
                 </div>
@@ -199,8 +199,8 @@ export default function PatientModal({ patient, onClose, onOpenReview }) {
 
           {/* AI Prioritization Reasoning Section (Gemini) */}
           <div style={{
-            background: 'linear-gradient(135deg, #f0fdfa, #f8fafc)',
-            border: '1px solid #99f6e4',
+            background: 'var(--bg-card-subtle)',
+            border: '1px solid var(--border-focus)',
             borderRadius: 'var(--radius-md)',
             padding: '1rem',
             display: 'flex',
@@ -209,8 +209,8 @@ export default function PatientModal({ patient, onClose, onOpenReview }) {
           }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <Sparkles size={16} color="#0d9488" />
-                <strong style={{ fontSize: '0.85rem', color: '#0f766e' }}>
+                <Sparkles size={16} color="var(--color-primary)" />
+                <strong style={{ fontSize: '0.85rem', color: 'var(--color-primary)' }}>
                   AI Prioritization Reasoning & Clinical Synthesis
                 </strong>
               </div>
@@ -232,7 +232,7 @@ export default function PatientModal({ patient, onClose, onOpenReview }) {
                   onClick={handleGenerateAiReasoning}
                   disabled={aiLoading}
                   className="btn btn-primary btn-sm"
-                  style={{ background: '#0d9488', fontSize: '0.75rem' }}
+                  style={{ fontSize: '0.75rem' }}
                 >
                   {aiLoading ? <Activity className="animate-spin" size={13} /> : <Bot size={13} />}
                   <span>{aiLoading ? 'Synthesizing...' : 'Generate with Gemini AI'}</span>
@@ -241,34 +241,34 @@ export default function PatientModal({ patient, onClose, onOpenReview }) {
             </div>
 
             {showKeyInput && (
-              <div style={{ display: 'flex', gap: '0.5rem', background: 'white', padding: '0.5rem', borderRadius: '6px', border: '1px solid #cbd5e1' }}>
+              <div style={{ display: 'flex', gap: '0.5rem', background: 'var(--bg-card)', padding: '0.5rem', borderRadius: '6px', border: '1px solid var(--border-light)' }}>
                 <input
                   type="password"
                   placeholder="Enter Gemini API Key (or leave blank to use server environment key)..."
                   value={apiKey}
                   onChange={(e) => setApiKey(e.target.value)}
-                  style={{ flex: 1, border: 'none', outline: 'none', fontSize: '0.75rem' }}
+                  style={{ flex: 1, border: 'none', outline: 'none', fontSize: '0.75rem', background: 'transparent', color: 'var(--text-main)' }}
                 />
               </div>
             )}
 
             {aiData ? (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.25rem' }}>
-                <div style={{ fontSize: '0.7rem', color: '#0d9488', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                <div style={{ fontSize: '0.7rem', color: 'var(--color-primary)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
                   <CheckCircle size={12} />
                   <span>Synthesized by: {aiData.model} ({aiData.source})</span>
                 </div>
-                <p style={{ fontSize: '0.825rem', color: '#1e293b', lineHeight: 1.5, background: 'white', padding: '0.75rem', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
+                <p style={{ fontSize: '0.825rem', color: 'var(--text-main)', lineHeight: 1.5, background: 'var(--bg-card)', padding: '0.75rem', borderRadius: '6px', border: '1px solid var(--border-light)' }}>
                   <strong>Prioritization Rationale: </strong> {aiData.reasoning}
                 </p>
                 {aiData.nurse_call_script && (
-                  <p style={{ fontSize: '0.8rem', color: '#0369a1', background: '#e0f2fe', padding: '0.6rem 0.75rem', borderRadius: '6px' }}>
+                  <p style={{ fontSize: '0.8rem', color: 'var(--color-primary)', background: 'var(--color-primary-light)', padding: '0.6rem 0.75rem', borderRadius: '6px' }}>
                     <strong>Tailored Nurse Script: </strong> "{aiData.nurse_call_script}"
                   </p>
                 )}
               </div>
             ) : (
-              <p style={{ fontSize: '0.75rem', color: '#64748b', margin: 0 }}>
+              <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', margin: 0 }}>
                 Click <strong>"Generate with Gemini AI"</strong> to synthesize why this patient was prioritized at Rank #{patient.queue_rank} and auto-draft an outreach conversation prompt.
               </p>
             )}
@@ -276,12 +276,12 @@ export default function PatientModal({ patient, onClose, onOpenReview }) {
 
           {/* Recommended Action */}
           <div style={{
-            background: '#f0fdf4',
-            border: '1px solid #bbf7d0',
+            background: 'var(--banner-info-bg)',
+            border: '1px solid var(--banner-info-border)',
             padding: '0.75rem 1rem',
             borderRadius: 'var(--radius-md)',
             fontSize: '0.825rem',
-            color: '#166534'
+            color: 'var(--banner-info-text)'
           }}>
             <strong>Recommended Clinic Action: </strong>
             {patient.recommended_action}
@@ -299,12 +299,12 @@ export default function PatientModal({ patient, onClose, onOpenReview }) {
                 </span>
               </div>
               <div style={{
-                background: '#f8fafc',
-                border: '1px solid #e2e8f0',
+                background: 'var(--bg-card-subtle)',
+                border: '1px solid var(--border-light)',
                 padding: '0.75rem',
                 borderRadius: 'var(--radius-md)',
                 fontSize: '0.825rem',
-                color: '#1e293b',
+                color: 'var(--text-main)',
                 fontStyle: 'italic',
                 lineHeight: 1.5
               }}>

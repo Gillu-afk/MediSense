@@ -119,7 +119,7 @@ export default function ScreeningView() {
     <div>
       {/* Intro Header */}
       <div style={{
-        background: 'white',
+        background: 'var(--bg-card)',
         border: '1px solid var(--border-light)',
         borderRadius: 'var(--radius-lg)',
         padding: '1.5rem',
@@ -128,8 +128,8 @@ export default function ScreeningView() {
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem' }}>
           <span style={{
-            background: '#e0f2fe',
-            color: '#0369a1',
+            background: 'var(--color-primary-light)',
+            color: 'var(--color-primary)',
             fontSize: '0.7rem',
             fontWeight: 700,
             padding: '0.2rem 0.5rem',
@@ -137,7 +137,7 @@ export default function ScreeningView() {
           }}>
             INDIVIDUAL SCREENING FORM
           </span>
-          <span style={{ fontSize: '0.8rem', color: '#64748b' }}>Decision-Support Assessment</span>
+          <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Decision-Support Assessment</span>
         </div>
         <h2 style={{ fontSize: '1.3rem', color: 'var(--text-main)', margin: 0 }}>
           Community Health Patient Intake & Risk Estimator
@@ -146,7 +146,7 @@ export default function ScreeningView() {
           Enter patient clinical vitals. Note: Enter 0 for unmeasured clinical vitals (Glucose, BP, Skin Thickness, Insulin, BMI) to trigger physiological missingness imputation.
         </p>
 
-        {/* Preset Buttons for Demo / Judging */}
+        {/* Preset Buttons for Quick Evaluation */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '1rem', flexWrap: 'wrap' }}>
           <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)' }}>Quick Presets:</span>
           <button
@@ -180,10 +180,10 @@ export default function ScreeningView() {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: result ? '1fr 1fr' : '1fr', gap: '1.5rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: result ? 'repeat(auto-fit, minmax(320px, 1fr))' : '1fr', gap: '1.5rem' }}>
         {/* Screening Form Card */}
         <div style={{
-          background: 'white',
+          background: 'var(--bg-card)',
           border: '1px solid var(--border-light)',
           borderRadius: 'var(--radius-lg)',
           padding: '1.5rem',
@@ -231,7 +231,7 @@ export default function ScreeningView() {
                   className="form-input"
                   required
                 />
-                <span className="form-helper">Median: 117 mg/dL (0 = unmeasured)</span>
+                <span className="form-helper">Cohort Median: 117 mg/dL (0 = unmeasured)</span>
               </div>
 
               {/* Blood Pressure */}
@@ -251,7 +251,7 @@ export default function ScreeningView() {
                   className="form-input"
                   required
                 />
-                <span className="form-helper">Median: 72 mmHg (0 = unmeasured)</span>
+                <span className="form-helper">Cohort Median: 72 mmHg (0 = unmeasured)</span>
               </div>
 
               {/* Skin Thickness */}
@@ -271,7 +271,7 @@ export default function ScreeningView() {
                   className="form-input"
                   required
                 />
-                <span className="form-helper">Median: 23 mm (0 = unmeasured)</span>
+                <span className="form-helper">Cohort Median: 23 mm (0 = unmeasured)</span>
               </div>
 
               {/* Insulin */}
@@ -291,7 +291,7 @@ export default function ScreeningView() {
                   className="form-input"
                   required
                 />
-                <span className="form-helper">Median: 125 µU/mL (0 = unmeasured)</span>
+                <span className="form-helper">Cohort Median: 125 µU/mL (0 = unmeasured)</span>
               </div>
 
               {/* BMI */}
@@ -311,7 +311,7 @@ export default function ScreeningView() {
                   className="form-input"
                   required
                 />
-                <span className="form-helper">Median: 32.0 kg/m² (&ge;30 = obese)</span>
+                <span className="form-helper">Cohort Median: 32.0 kg/m² (&ge;30 = obese)</span>
               </div>
 
               {/* Diabetes Pedigree Function */}
@@ -331,7 +331,7 @@ export default function ScreeningView() {
                   className="form-input"
                   required
                 />
-                <span className="form-helper">Median: 0.37 (family history score)</span>
+                <span className="form-helper">Cohort Median: 0.37 (family history score)</span>
               </div>
 
               {/* Age */}
@@ -355,7 +355,7 @@ export default function ScreeningView() {
             </div>
 
             {error && (
-              <div style={{ marginTop: '1rem', padding: '0.75rem', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '6px', color: '#b91c1c', fontSize: '0.85rem' }}>
+              <div style={{ marginTop: '1rem', padding: '0.75rem', background: 'var(--risk-high-bg)', border: '1px solid var(--risk-high-border)', borderRadius: '6px', color: 'var(--risk-high-text)', fontSize: '0.85rem' }}>
                 {error}
               </div>
             )}
@@ -384,7 +384,7 @@ export default function ScreeningView() {
         {/* Result Card (Appears after submission) */}
         {result && (
           <div style={{
-            background: 'white',
+            background: 'var(--bg-card)',
             border: '1px solid var(--border-light)',
             borderRadius: 'var(--radius-lg)',
             padding: '1.5rem',
@@ -395,7 +395,7 @@ export default function ScreeningView() {
           }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div>
-                <span style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: 600 }}>SCREENING ID: {result.patient_id}</span>
+                <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 600 }}>SCREENING ID: {result.patient_id}</span>
                 <h3 style={{ fontSize: '1.2rem', margin: '0.2rem 0 0', color: 'var(--text-main)' }}>
                   Screening Assessment Output
                 </h3>
@@ -407,26 +407,26 @@ export default function ScreeningView() {
 
             {/* Probability Gauge */}
             <div style={{
-              background: '#f8fafc',
-              border: '1px solid #e2e8f0',
+              background: 'var(--bg-card-subtle)',
+              border: '1px solid var(--border-light)',
               borderRadius: 'var(--radius-md)',
               padding: '1.25rem',
               textAlign: 'center'
             }}>
-              <div style={{ fontSize: '0.75rem', color: '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>
                 Estimated Risk Probability
               </div>
               <div style={{
                 fontFamily: 'var(--font-display)',
                 fontSize: '2.5rem',
                 fontWeight: 800,
-                color: result.risk_band === 'High Risk' ? '#b91c1c' : result.risk_band === 'Moderate Risk' ? '#b45309' : '#047857',
+                color: result.risk_band === 'High Risk' ? 'var(--risk-high-text)' : result.risk_band === 'Moderate Risk' ? 'var(--risk-mod-text)' : 'var(--risk-low-text)',
                 lineHeight: 1.1,
                 margin: '0.25rem 0'
               }}>
                 {result.risk_percentage}%
               </div>
-              <div style={{ fontSize: '0.8rem', color: '#475569' }}>
+              <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
                 Statistical decision-support estimate based on calibrated logistic regression
               </div>
             </div>
@@ -441,15 +441,15 @@ export default function ScreeningView() {
                   <div key={i} style={{
                     padding: '0.65rem 0.85rem',
                     borderRadius: 'var(--radius-sm)',
-                    background: f.level === 'high' ? '#fef2f2' : '#f8fafc',
-                    border: '1px solid ' + (f.level === 'high' ? '#fecaca' : '#e2e8f0'),
+                    background: f.level === 'high' ? 'var(--risk-high-bg)' : 'var(--bg-card-subtle)',
+                    border: '1px solid ' + (f.level === 'high' ? 'var(--risk-high-border)' : 'var(--border-light)'),
                     fontSize: '0.825rem'
                   }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 600 }}>
-                      <span style={{ color: f.level === 'high' ? '#991b1b' : 'var(--text-main)' }}>{f.factor}: {f.value}</span>
-                      <span style={{ fontSize: '0.7rem', color: '#64748b' }}>{f.benchmark}</span>
+                      <span style={{ color: f.level === 'high' ? 'var(--risk-high-text)' : 'var(--text-main)' }}>{f.factor}: {f.value}</span>
+                      <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>{f.benchmark}</span>
                     </div>
-                    <div style={{ fontSize: '0.75rem', color: '#475569', marginTop: '0.25rem', lineHeight: 1.4 }}>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem', lineHeight: 1.4 }}>
                       {f.clinical_note}
                     </div>
                   </div>
@@ -459,12 +459,12 @@ export default function ScreeningView() {
 
             {/* Recommended Action */}
             <div style={{
-              background: '#f0fdf4',
-              border: '1px solid #bbf7d0',
+              background: 'var(--banner-info-bg)',
+              border: '1px solid var(--banner-info-border)',
               padding: '0.85rem 1rem',
               borderRadius: 'var(--radius-md)',
               fontSize: '0.825rem',
-              color: '#166534'
+              color: 'var(--banner-info-text)'
             }}>
               <strong>Recommended Clinic Action: </strong>
               {result.recommended_action}
@@ -481,12 +481,12 @@ export default function ScreeningView() {
                 </span>
               </div>
               <div style={{
-                background: '#f8fafc',
-                border: '1px solid #e2e8f0',
+                background: 'var(--bg-card-subtle)',
+                border: '1px solid var(--border-light)',
                 padding: '0.75rem',
                 borderRadius: 'var(--radius-md)',
                 fontSize: '0.825rem',
-                color: '#1e293b',
+                color: 'var(--text-main)',
                 fontStyle: 'italic',
                 lineHeight: 1.5
               }}>
@@ -495,7 +495,7 @@ export default function ScreeningView() {
             </div>
 
             {/* Disclaimer */}
-            <div style={{ fontSize: '0.7rem', color: '#94a3b8', borderTop: '1px solid #e2e8f0', paddingTop: '0.75rem' }}>
+            <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', borderTop: '1px solid var(--border-light)', paddingTop: '0.75rem' }}>
               <strong>Clinical Guardrail: </strong> {result.clinical_disclaimer}
             </div>
           </div>

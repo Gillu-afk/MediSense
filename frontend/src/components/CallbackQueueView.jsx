@@ -19,7 +19,7 @@ export default function CallbackQueueView({ onSelectPatient }) {
 
   // Filters & Pagination
   const [page, setPage] = useState(1);
-  const [pageSize] = useState(20);
+  const [pageSize, setPageSize] = useState(20);
   const [search, setSearch] = useState('');
   const [riskBand, setRiskBand] = useState('');
   const [sortBy, setSortBy] = useState('queue_rank');
@@ -57,6 +57,9 @@ export default function CallbackQueueView({ onSelectPatient }) {
     }
   };
 
+  const totalInQueue = data ? data.total_in_queue : 100;
+  const capacityLimit = data ? data.capacity_limit : 100;
+
   return (
     <div>
       {/* Capacity & Queue Header Card */}
@@ -88,29 +91,29 @@ export default function CallbackQueueView({ onSelectPatient }) {
             <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>Ranked by Model Estimated Risk</span>
           </div>
           <h2 style={{ color: 'white', fontSize: '1.4rem', margin: 0 }}>
-            Prioritized Callback Queue: {data ? data.total_in_queue : 100} / 100 Slots
+            Prioritized Callback Queue: {totalInQueue} / {capacityLimit} Slots
           </h2>
           <p style={{ fontSize: '0.85rem', color: '#cbd5e1', marginTop: '0.35rem' }}>
-            Restricted to the clinic's maximum operating capacity of 100 nurse calls per monthly outreach cycle.
+            Restricted to the clinic's maximum operating capacity of {capacityLimit} nurse calls per monthly outreach cycle.
           </p>
         </div>
 
         {/* Stats Grid inside banner */}
         {data && (
           <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-            <div style={{ background: 'rgba(255,255,255,0.08)', padding: '0.75rem 1rem', borderRadius: 'var(--radius-md)', textAlign: 'center' }}>
+            <div style={{ background: 'rgba(255,255,255,0.08)', padding: '0.75rem 1rem', borderRadius: 'var(--radius-md)', textAlign: 'center', border: '1px solid rgba(255,255,255,0.1)' }}>
               <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#f87171' }}>{data.high_risk_count}</div>
               <div style={{ fontSize: '0.7rem', color: '#cbd5e1', textTransform: 'uppercase' }}>High Risk</div>
             </div>
-            <div style={{ background: 'rgba(255,255,255,0.08)', padding: '0.75rem 1rem', borderRadius: 'var(--radius-md)', textAlign: 'center' }}>
+            <div style={{ background: 'rgba(255,255,255,0.08)', padding: '0.75rem 1rem', borderRadius: 'var(--radius-md)', textAlign: 'center', border: '1px solid rgba(255,255,255,0.1)' }}>
               <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#fbbf24' }}>{data.moderate_risk_count}</div>
               <div style={{ fontSize: '0.7rem', color: '#cbd5e1', textTransform: 'uppercase' }}>Moderate Risk</div>
             </div>
-            <div style={{ background: 'rgba(255,255,255,0.08)', padding: '0.75rem 1rem', borderRadius: 'var(--radius-md)', textAlign: 'center' }}>
+            <div style={{ background: 'rgba(255,255,255,0.08)', padding: '0.75rem 1rem', borderRadius: 'var(--radius-md)', textAlign: 'center', border: '1px solid rgba(255,255,255,0.1)' }}>
               <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#60a5fa' }}>{data.contacted_count}</div>
               <div style={{ fontSize: '0.7rem', color: '#cbd5e1', textTransform: 'uppercase' }}>Contacted</div>
             </div>
-            <div style={{ background: 'rgba(255,255,255,0.08)', padding: '0.75rem 1rem', borderRadius: 'var(--radius-md)', textAlign: 'center' }}>
+            <div style={{ background: 'rgba(255,255,255,0.08)', padding: '0.75rem 1rem', borderRadius: 'var(--radius-md)', textAlign: 'center', border: '1px solid rgba(255,255,255,0.1)' }}>
               <div style={{ fontSize: '1.25rem', fontWeight: 800, color: '#34d399' }}>{data.pending_count}</div>
               <div style={{ fontSize: '0.7rem', color: '#cbd5e1', textTransform: 'uppercase' }}>Pending Call</div>
             </div>
@@ -122,7 +125,7 @@ export default function CallbackQueueView({ onSelectPatient }) {
       <div className="table-container">
         <div className="table-toolbar">
           <div className="search-box">
-            <Search size={16} color="#64748b" />
+            <Search size={16} color="var(--text-muted)" />
             <input
               type="text"
               placeholder="Search by Patient Code (e.g. PID-446)..."
@@ -159,7 +162,7 @@ export default function CallbackQueueView({ onSelectPatient }) {
               href={apiService.getExportUrl()}
               download="medisense_callback_queue_top100.csv"
               className="btn btn-secondary btn-sm"
-              title="Export complete 100 queue to CSV"
+              title="Export complete queue to CSV"
             >
               <Download size={14} />
               <span>Export CSV</span>
@@ -169,14 +172,14 @@ export default function CallbackQueueView({ onSelectPatient }) {
 
         {/* Table Content */}
         {loading ? (
-          <div style={{ padding: '3rem', textAlign: 'center', color: '#64748b' }}>
+          <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>
             <Activity className="animate-spin" size={28} style={{ margin: '0 auto 0.75rem' }} />
             <p>Loading callback queue...</p>
           </div>
         ) : error ? (
-          <div style={{ padding: '2rem', color: '#b91c1c' }}>{error}</div>
+          <div style={{ padding: '2rem', color: 'var(--risk-high-text)' }}>{error}</div>
         ) : data && data.patients.length === 0 ? (
-          <div style={{ padding: '3rem', textAlign: 'center', color: '#64748b' }}>
+          <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>
             <AlertCircle size={28} style={{ margin: '0 auto 0.75rem' }} />
             <p>No patients match the search or filter criteria.</p>
           </div>
@@ -218,7 +221,7 @@ export default function CallbackQueueView({ onSelectPatient }) {
                   const riskPercent = (patient.estimated_risk * 100).toFixed(1);
                   const isTop10 = patient.queue_rank <= 10;
                   return (
-                    <tr key={patient.id} style={{ background: isTop10 ? '#f0f9ff' : 'transparent' }}>
+                    <tr key={patient.id} style={{ background: isTop10 ? 'var(--table-highlight-row)' : 'transparent' }}>
                       <td>
                         <div style={{
                           display: 'inline-flex',
@@ -229,21 +232,22 @@ export default function CallbackQueueView({ onSelectPatient }) {
                           borderRadius: '50%',
                           fontSize: '0.75rem',
                           fontWeight: 700,
-                          background: isTop10 ? '#0284c7' : '#e2e8f0',
-                          color: isTop10 ? 'white' : '#475569'
+                          background: isTop10 ? 'var(--color-primary)' : 'var(--bg-card-subtle)',
+                          color: isTop10 ? 'white' : 'var(--text-main)',
+                          border: '1px solid var(--border-light)'
                         }}>
                           {patient.queue_rank}
                         </div>
                       </td>
                       <td>
-                        <strong style={{ fontFamily: 'var(--font-display)', color: '#0f172a' }}>
+                        <strong style={{ fontFamily: 'var(--font-display)', color: 'var(--text-main)' }}>
                           {patient.patient_code}
                         </strong>
                         {isTop10 && (
                           <span style={{
                             marginLeft: '0.4rem',
                             fontSize: '0.65rem',
-                            background: '#0284c7',
+                            background: 'var(--color-primary)',
                             color: 'white',
                             padding: '0.1rem 0.35rem',
                             borderRadius: '4px',
@@ -255,13 +259,14 @@ export default function CallbackQueueView({ onSelectPatient }) {
                       </td>
                       <td>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                          <span style={{ fontWeight: 800, fontSize: '0.9rem' }}>{riskPercent}%</span>
+                          <span style={{ fontWeight: 800, fontSize: '0.9rem', color: 'var(--text-main)' }}>{riskPercent}%</span>
                           <div style={{
                             width: '45px',
                             height: '5px',
-                            background: '#e2e8f0',
+                            background: 'var(--bg-card-subtle)',
                             borderRadius: '3px',
-                            overflow: 'hidden'
+                            overflow: 'hidden',
+                            border: '1px solid var(--border-light)'
                           }}>
                             <div style={{
                               width: `${riskPercent}%`,
@@ -277,10 +282,10 @@ export default function CallbackQueueView({ onSelectPatient }) {
                         </span>
                       </td>
                       <td>
-                        <strong>{patient.glucose}</strong> <span style={{ fontSize: '0.7rem', color: '#64748b' }}>mg/dL</span>
+                        <strong>{patient.glucose}</strong> <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>mg/dL</span>
                       </td>
                       <td>
-                        <strong>{patient.bmi}</strong> <span style={{ fontSize: '0.7rem', color: '#64748b' }}>kg/m²</span>
+                        <strong>{patient.bmi}</strong> <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>kg/m²</span>
                       </td>
                       <td>
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.25rem', maxWidth: '240px' }}>
@@ -290,11 +295,11 @@ export default function CallbackQueueView({ onSelectPatient }) {
                               title={f.clinical_note}
                               style={{
                                 fontSize: '0.7rem',
-                                background: f.level === 'high' ? '#fee2e2' : '#f1f5f9',
-                                color: f.level === 'high' ? '#991b1b' : '#334155',
+                                background: f.level === 'high' ? 'var(--risk-high-bg)' : 'var(--bg-card-subtle)',
+                                color: f.level === 'high' ? 'var(--risk-high-text)' : 'var(--text-main)',
                                 padding: '0.15rem 0.4rem',
                                 borderRadius: '4px',
-                                border: '1px solid ' + (f.level === 'high' ? '#fca5a5' : '#cbd5e1')
+                                border: '1px solid ' + (f.level === 'high' ? 'var(--risk-high-border)' : 'var(--border-light)')
                               }}
                             >
                               {f.factor}: {f.value}
@@ -302,7 +307,7 @@ export default function CallbackQueueView({ onSelectPatient }) {
                           ))}
                         </div>
                       </td>
-                      <td style={{ fontSize: '0.8rem', color: '#334155', maxWidth: '200px' }}>
+                      <td style={{ fontSize: '0.8rem', color: 'var(--text-main)', maxWidth: '200px' }}>
                         {patient.recommended_action}
                       </td>
                       <td>
@@ -332,7 +337,7 @@ export default function CallbackQueueView({ onSelectPatient }) {
         {data && (
           <div className="pagination-bar">
             <div>
-              Showing {((page - 1) * pageSize) + 1} to {Math.min(page * pageSize, data.total_matching)} of {data.total_matching} ranked patients (Total Queue: {data.total_in_queue}/100)
+              Showing {((page - 1) * pageSize) + 1} to {Math.min(page * pageSize, data.total_matching)} of {data.total_matching} ranked patients (Total Queue: {data.total_in_queue}/{data.capacity_limit || 100})
             </div>
             <div className="pagination-controls">
               <button

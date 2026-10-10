@@ -101,7 +101,7 @@ export default function NurseReviewView() {
 
   if (loading) {
     return (
-      <div style={{ padding: '3rem', textAlign: 'center', color: '#64748b' }}>
+      <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>
         <Activity className="animate-spin" size={32} style={{ margin: '0 auto 1rem' }} />
         <p>Loading Top-10 nurse follow-up notes...</p>
       </div>
@@ -110,12 +110,13 @@ export default function NurseReviewView() {
 
   if (error) {
     return (
-      <div style={{ padding: '2rem', color: '#b91c1c', background: '#fef2f2', borderRadius: '8px' }}>
+      <div style={{ padding: '2rem', color: 'var(--risk-high-text)', background: 'var(--risk-high-bg)', border: '1px solid var(--risk-high-border)', borderRadius: '8px' }}>
         <p>Error: {error}</p>
       </div>
     );
   }
 
+  const totalNotes = notes.length;
   const approvedCount = notes.filter((n) => n.approval_status === 'APPROVED').length;
   const contactedCount = notes.filter((n) => n.review_status === 'Contacted' || n.review_status === 'Completed').length;
 
@@ -123,7 +124,7 @@ export default function NurseReviewView() {
     <div>
       {/* Overview Banner */}
       <div style={{
-        background: 'white',
+        background: 'var(--bg-card)',
         border: '1px solid var(--border-light)',
         borderRadius: 'var(--radius-lg)',
         padding: '1.5rem',
@@ -138,8 +139,8 @@ export default function NurseReviewView() {
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
             <span style={{
-              background: '#e0f2fe',
-              color: '#0369a1',
+              background: 'var(--color-primary-light)',
+              color: 'var(--color-primary)',
               fontSize: '0.7rem',
               fontWeight: 700,
               padding: '0.2rem 0.5rem',
@@ -147,7 +148,7 @@ export default function NurseReviewView() {
             }}>
               HUMAN-IN-THE-LOOP CLINICAL TRIAGE
             </span>
-            <span style={{ fontSize: '0.8rem', color: '#64748b' }}>Top 10 Highest-Risk Queue</span>
+            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Top {totalNotes} Highest-Risk Queue</span>
           </div>
           <h2 style={{ fontSize: '1.3rem', margin: 0, color: 'var(--text-main)' }}>
             Nurse Follow-Up Note Review & Approval Center
@@ -158,13 +159,13 @@ export default function NurseReviewView() {
         </div>
 
         <div style={{ display: 'flex', gap: '1rem' }}>
-          <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', padding: '0.5rem 1rem', borderRadius: 'var(--radius-md)', textAlign: 'center' }}>
-            <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#047857' }}>{approvedCount} / 10</div>
-            <div style={{ fontSize: '0.7rem', color: '#64748b', textTransform: 'uppercase' }}>Approved</div>
+          <div style={{ background: 'var(--bg-card-subtle)', border: '1px solid var(--border-light)', padding: '0.5rem 1rem', borderRadius: 'var(--radius-md)', textAlign: 'center' }}>
+            <div style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--risk-low-text)' }}>{approvedCount} / {totalNotes}</div>
+            <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Approved</div>
           </div>
-          <div style={{ background: '#f8fafc', border: '1px solid #e2e8f0', padding: '0.5rem 1rem', borderRadius: 'var(--radius-md)', textAlign: 'center' }}>
-            <div style={{ fontSize: '1.2rem', fontWeight: 800, color: '#1d4ed8' }}>{contactedCount} / 10</div>
-            <div style={{ fontSize: '0.7rem', color: '#64748b', textTransform: 'uppercase' }}>Contacted</div>
+          <div style={{ background: 'var(--bg-card-subtle)', border: '1px solid var(--border-light)', padding: '0.5rem 1rem', borderRadius: 'var(--radius-md)', textAlign: 'center' }}>
+            <div style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--color-primary)' }}>{contactedCount} / {totalNotes}</div>
+            <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Contacted</div>
           </div>
         </div>
       </div>
@@ -186,7 +187,7 @@ export default function NurseReviewView() {
                     width: '32px',
                     height: '32px',
                     borderRadius: '50%',
-                    background: '#0284c7',
+                    background: 'var(--color-primary)',
                     color: 'white',
                     display: 'flex',
                     alignItems: 'center',
@@ -213,11 +214,11 @@ export default function NurseReviewView() {
                   {/* Approval Toggle Badge / Button */}
                   <button
                     onClick={() => handleToggleApproval(item.patient_id, item.approval_status)}
-                    className={`btn btn-sm ${isApproved ? 'btn-primary' : 'btn-secondary'}`}
+                    className="btn btn-sm"
                     style={{
-                      background: isApproved ? '#ecfdf5' : '#fef2f2',
-                      color: isApproved ? '#047857' : '#dc2626',
-                      borderColor: isApproved ? '#a7f3d0' : '#fecaca',
+                      background: isApproved ? 'var(--status-approved-bg)' : 'var(--risk-high-bg)',
+                      color: isApproved ? 'var(--status-approved-text)' : 'var(--risk-high-text)',
+                      borderColor: isApproved ? 'var(--status-approved-border)' : 'var(--risk-high-border)',
                       fontSize: '0.75rem',
                       fontWeight: 700
                     }}
@@ -291,12 +292,12 @@ export default function NurseReviewView() {
                   </div>
                 ) : (
                   <div style={{
-                    background: '#f8fafc',
-                    border: '1px solid #e2e8f0',
+                    background: 'var(--bg-card-subtle)',
+                    border: '1px solid var(--border-light)',
                     padding: '0.75rem 1rem',
                     borderRadius: 'var(--radius-md)',
                     fontSize: '0.875rem',
-                    color: '#1e293b',
+                    color: 'var(--text-main)',
                     display: 'flex',
                     alignItems: 'flex-start',
                     justifyContent: 'space-between',
@@ -318,18 +319,18 @@ export default function NurseReviewView() {
 
               {/* Key Factor Badges */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', paddingTop: '0.35rem', borderTop: '1px solid var(--border-light)' }}>
-                <span style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: 600 }}>CITED INDICATORS:</span>
+                <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 600 }}>CITED INDICATORS:</span>
                 {item.top_factors && item.top_factors.map((f, i) => (
                   <span
                     key={i}
                     title={f.clinical_note}
                     style={{
                       fontSize: '0.7rem',
-                      background: f.level === 'high' ? '#fee2e2' : '#f1f5f9',
-                      color: f.level === 'high' ? '#991b1b' : '#334155',
+                      background: f.level === 'high' ? 'var(--risk-high-bg)' : 'var(--bg-card-subtle)',
+                      color: f.level === 'high' ? 'var(--risk-high-text)' : 'var(--text-main)',
                       padding: '0.15rem 0.45rem',
                       borderRadius: '4px',
-                      border: '1px solid ' + (f.level === 'high' ? '#fca5a5' : '#cbd5e1')
+                      border: '1px solid ' + (f.level === 'high' ? 'var(--risk-high-border)' : 'var(--border-light)')
                     }}
                   >
                     {f.factor}: {f.value}
@@ -337,13 +338,13 @@ export default function NurseReviewView() {
                 ))}
 
                 {item.reviewed_by && (
-                  <span style={{ marginLeft: 'auto', fontSize: '0.7rem', color: '#94a3b8' }}>
+                  <span style={{ marginLeft: 'auto', fontSize: '0.7rem', color: 'var(--text-muted)' }}>
                     Reviewed by: <strong>{item.reviewed_by}</strong> ({item.updated_at ? item.updated_at.split(' ')[0] : 'Today'})
                   </span>
                 )}
 
                 {isSuccess && (
-                  <span style={{ marginLeft: 'auto', color: '#047857', fontSize: '0.75rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                  <span style={{ marginLeft: 'auto', color: 'var(--risk-low-text)', fontSize: '0.75rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
                     <CheckCircle2 size={13} /> Saved!
                   </span>
                 )}

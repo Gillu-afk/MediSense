@@ -6,8 +6,22 @@ import os
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent
+ROOT_DIR = BASE_DIR.parent
 DATA_DIR = BASE_DIR / "data"
 DATASET_PATH = DATA_DIR / "diabetes.csv"
+
+# Load .env file from ROOT_DIR if present
+ENV_PATH = ROOT_DIR / ".env"
+if ENV_PATH.exists():
+    with open(ENV_PATH, "r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if line and not line.startswith("#") and "=" in line:
+                key, val = line.split("=", 1)
+                key = key.strip()
+                val = val.strip().strip('"').strip("'")
+                if key and key not in os.environ:
+                    os.environ[key] = val
 
 # Database Configuration
 DATABASE_URL = os.getenv("DATABASE_URL", "")

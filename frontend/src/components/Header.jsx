@@ -1,16 +1,29 @@
 import React from 'react';
-import { PhoneCall, Download, AlertCircle } from 'lucide-react';
+import { PhoneCall, Download, Sun, Moon, Database } from 'lucide-react';
 import { apiService } from '../services/api';
 
-export default function Header({ activeTab, queueStats }) {
+export default function Header({
+  activeTab,
+  theme = 'dark',
+  toggleTheme,
+  totalPatients,
+  queueCount = 100,
+  capacityLimit = 100
+}) {
+  const patientCountStr = totalPatients != null ? ` (${totalPatients} Patients)` : '';
+
   const titles = {
     dashboard: {
       title: 'Clinical Screening Dashboard & Dataset Insights',
       subtitle: 'Overview of historical patient cohort, model validation, and prioritized triage metrics'
     },
     queue: {
-      title: 'Prioritized Callback Queue (Capacity: 100 Calls/Month)',
+      title: `Prioritized Callback Queue (Capacity: ${capacityLimit} Calls/Month)`,
       subtitle: 'Ranked list of patients flagged for nurse telephone follow-up'
+    },
+    dataset: {
+      title: `Historical Cohort Dataset Explorer${patientCountStr}`,
+      subtitle: 'Direct view of raw and cleaned clinical parameters with outcome labels and model risk bands'
     },
     notes: {
       title: 'Top-10 Nurse Follow-Up Review Center',
@@ -27,6 +40,7 @@ export default function Header({ activeTab, queueStats }) {
   };
 
   const current = titles[activeTab] || titles.dashboard;
+  const capacityPct = Math.min(100, Math.round(((queueCount || 100) / capacityLimit) * 100));
 
   return (
     <header className="top-header">
@@ -36,13 +50,32 @@ export default function Header({ activeTab, queueStats }) {
       </div>
 
       <div className="header-actions">
+        {/* Theme Toggle Button (Light/Dark Mode) */}
+        <button
+          onClick={toggleTheme}
+          className="btn btn-secondary btn-sm theme-toggle-btn"
+          title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`}
+        >
+          {theme === 'dark' ? (
+            <>
+              <Sun size={15} color="#fbbf24" />
+              <span>Light Mode</span>
+            </>
+          ) : (
+            <>
+              <Moon size={15} color="#38bdf8" />
+              <span>Dark Mode</span>
+            </>
+          )}
+        </button>
+
         <div className="capacity-meter-pill" title="Clinic monthly follow-up telephone capacity">
-          <PhoneCall size={14} color="#0284c7" />
-          <span>Capacity: 100 calls/mo</span>
+          <PhoneCall size={14} color="var(--color-primary)" />
+          <span>Capacity: {capacityLimit} calls/mo</span>
           <div className="capacity-bar-mini">
             <div
               className="capacity-bar-fill"
-              style={{ width: `${queueStats ? Math.min(queueStats.total_in_queue, 100) : 100}%` }}
+              style={{ width: `${capacityPct}%` }}
             ></div>
           </div>
         </div>

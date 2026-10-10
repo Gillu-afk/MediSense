@@ -2,6 +2,7 @@ import React from 'react';
 import {
   LayoutDashboard,
   Users,
+  Database,
   ClipboardList,
   UserPlus,
   Cpu,
@@ -9,10 +10,21 @@ import {
   Activity
 } from 'lucide-react';
 
-export default function Sidebar({ activeTab, setActiveTab, demoMode, queueCount = 100 }) {
+export default function Sidebar({ activeTab, setActiveTab, demoMode, totalPatients, queueCount }) {
   const navItems = [
     { id: 'dashboard', label: 'Dashboard & Insights', icon: LayoutDashboard },
-    { id: 'queue', label: 'Ranked Callback Queue', icon: Users, badge: `${queueCount}/100` },
+    {
+      id: 'queue',
+      label: 'Ranked Callback Queue',
+      icon: Users,
+      badge: queueCount != null ? `${queueCount}/100` : '100'
+    },
+    {
+      id: 'dataset',
+      label: 'Dataset Explorer',
+      icon: Database,
+      badge: totalPatients != null ? `${totalPatients}` : null
+    },
     { id: 'notes', label: 'Top-10 Nurse Review', icon: ClipboardList, badge: '10' },
     { id: 'screening', label: 'Individual Screening', icon: UserPlus },
     { id: 'model', label: 'Model Evaluation & CV', icon: Cpu },
@@ -59,7 +71,7 @@ export default function Sidebar({ activeTab, setActiveTab, demoMode, queueCount 
             <span>Demo Mode (Ephemeral DB)</span>
           </div>
         ) : (
-          <div style={{ color: '#64748b', fontSize: '0.7rem' }}>
+          <div style={{ color: 'var(--text-muted)', fontSize: '0.7rem' }}>
             SQLite Persistence Active
           </div>
         )}

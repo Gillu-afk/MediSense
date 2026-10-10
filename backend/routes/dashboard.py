@@ -12,21 +12,24 @@ router = APIRouter(tags=["Dashboard"])
 def get_dashboard_summary():
     model = get_model()
     df = model.historical_df
-    insights = calculate_dataset_insights(df)
-
-    # Compute KPI statistics
     total_patients = len(df)
     positive_outcomes = int(df["Outcome"].sum())
+    insights = calculate_dataset_insights(df)
+
+    # Compute dynamic model metrics from cross-validation
+    from backend.routes.model_metrics import get_model_metrics
+    metrics = get_model_metrics()
+    lr_metrics = metrics["models"]["logistic_regression"]
 
     kpis = KPICards(
         total_patients_loaded=total_patients,
         positive_historical_outcomes=positive_outcomes,
         patients_in_callback_queue=100,
         callback_queue_capacity=100,
-        model_recall=0.7199,
-        model_roc_auc=0.8372,
-        precision_at_100=0.8100,
-        recall_at_100=0.3022
+        model_recall=lr_metrics["recall_mean"],
+        model_roc_auc=lr_metrics["roc_auc_mean"],
+        precision_at_100=lr_metrics["capacity_metrics"]["precision_at_100"],
+        recall_at_100=lr_metrics["capacity_metrics"]["recall_at_100"]
     )
 
     # Distribution histograms for charts
