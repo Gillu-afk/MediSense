@@ -23,8 +23,11 @@ wheels/
 .pytest_cache/
 .env
 
-# Database (keep sample / local db ignored or tracked as needed)
-# backend/medisense.db
+# Database
+backend/medisense.db
+*.db
+*.sqlite3
+
 
 # Node / Frontend
 frontend/node_modules/
